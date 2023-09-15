@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  h1 {
+    @apply text-4xl font-bold text-gray-900;
+  }
+
+  h2 {
+    @apply text-3xl font-bold text-gray-800;
+  }
+
+  h3 {
+    @apply text-2xl font-bold text-gray-700;
+  }
+
+  h4 {
+    @apply text-xl font-bold text-gray-600;
+  }
+
+  h5 {
+    @apply text-lg font-bold text-gray-500;
+  }
+
+  h6 {
+    @apply text-base font-bold text-gray-400;
+  }
+}
+
+.strapiMarkdownRichText {
+  margin-top: 2rem;
+  // border: 1rem dotted pink;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    margin-bottom: 1rem;
+  }
+  p {
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+  }
+
+  ul {
+    list-style-type: disc;
+    padding-left: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  li {
+    margin-bottom: 0.5rem;
+  }
+}
