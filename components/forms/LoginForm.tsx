@@ -9,18 +9,7 @@ const LoginForm = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    try {
-      const data = await authService.login(email, password);
-
-      if (data.jwt) {
-        login(data.jwt, data.user);
-      } else {
-        console.log("Login failed!");
-      }
-    } catch (error) {
-      console.error("Error during login:", error);
-    }
+    await login(email, password);
   };
 
   return (

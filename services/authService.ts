@@ -1,32 +1,23 @@
-import apiClient, { setAuthToken } from "./strapiApiClient";
-import Cookies from "js-cookie"; // Assuming you're using js-cookie
+import apiClient from "./apiClient";
 
 const authService = {
   async login(email: string, password: string) {
-    console.log("email:", email);
-    console.log("password:", password);
-    console.log("Auth.login is invoked");
-    const response = await apiClient.post("/auth/local", {
+    const response = await apiClient.post("/api/login", {
       identifier: email,
       password,
     });
 
-    console.log(response);
     const data = response.data;
 
-    if (data.jwt) {
-      // Store the JWT in a cookie and set it for the axios instance
-      Cookies.set("authToken", data.jwt, { secure: true, sameSite: "strict" });
-      setAuthToken(data.jwt);
+    if (data.user) {
+      return data;
+    } else {
+      throw new Error("Login failed");
     }
-
-    return data;
   },
 
-  logout() {
-    // Remove the JWT from the cookie and axios instance
-    Cookies.remove("authToken");
-    setAuthToken(null);
+  async logout() {
+    await apiClient.post("/api/logout");
   },
 
   async register(username: string, email: string, password: string) {

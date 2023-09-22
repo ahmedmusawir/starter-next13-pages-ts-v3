@@ -1,18 +1,22 @@
 import axios from "axios";
 
+const strapiApiKey = process.env.STRAPI_API_KEY;
 const strapiApiUrl = process.env.NEXT_PUBLIC_STRAPI_API_BASE_URL;
 
-const apiClient = axios.create({
+const strapiApiClient = axios.create({
   baseURL: strapiApiUrl,
+  headers: { Authorization: `Bearer ${strapiApiKey}` },
 });
 
 // Function to set the JWT token for subsequent requests
 export const setAuthToken = (token: string | null) => {
   if (token) {
-    apiClient.defaults.headers["Authorization"] = `Bearer ${token}`;
+    strapiApiClient.defaults.headers["Authorization"] = `Bearer ${token}`;
   } else {
-    delete apiClient.defaults.headers["Authorization"];
+    strapiApiClient.defaults.headers[
+      "Authorization"
+    ] = `Bearer ${strapiApiKey}`;
   }
 };
 
-export default apiClient;
+export default strapiApiClient;

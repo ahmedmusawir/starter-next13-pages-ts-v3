@@ -23,7 +23,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
   isLoading: boolean;
-  login: (jwt: string, user: User) => void;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -52,16 +52,30 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     initializeAuth();
   }, []);
 
-  const login = (jwt: string, user: User) => {
-    Cookies.set("authToken", jwt, { secure: true, sameSite: "strict" });
-    setIsAuthenticated(true);
-    setUser(user);
+  const login = async (email: string, password: string) => {
+    try {
+      const data = await authService.login(email, password);
+      console.log("Login success data", data);
+
+      if (data.user) {
+        setIsAuthenticated(true);
+        setUser(data.user);
+      } else {
+        console.error("Login failed");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
   };
 
-  const logout = () => {
-    Cookies.remove("authToken");
-    setIsAuthenticated(false);
-    setUser(null);
+  const logout = async () => {
+    try {
+      await authService.logout();
+      setIsAuthenticated(false);
+      setUser(null);
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
   };
 
   if (isLoading) {
