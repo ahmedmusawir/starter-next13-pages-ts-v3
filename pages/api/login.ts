@@ -1,13 +1,7 @@
-import apiClient from "@/services/strapiApiClient";
+import { AxiosError } from "@/global-interfaces";
+import strapiApiClient from "@/services/strapiApiClient";
 import cookie from "cookie";
 import { NextApiRequest, NextApiResponse } from "next";
-
-export interface AxiosError {
-  response?: {
-    status?: number;
-    data?: any;
-  };
-}
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== "POST") {
@@ -17,7 +11,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { identifier, password } = req.body;
 
   try {
-    const strapiRes = await apiClient.post(`/auth/local`, {
+    const strapiRes = await strapiApiClient.post(`/auth/local`, {
       identifier,
       password,
     });

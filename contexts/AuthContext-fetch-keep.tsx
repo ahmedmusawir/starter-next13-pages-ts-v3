@@ -41,13 +41,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const data = await authService.checkAuthStatus();
-        setIsAuthenticated(true);
-        setUser(data);
+        const response = await fetch("/api/current-user");
+        const data = await response.json();
+
+        if (response.ok) {
+          setIsAuthenticated(true);
+          setUser(data); // Assuming the endpoint returns the user data
+        } else {
+          setIsAuthenticated(false);
+          setUser(null);
+        }
       } catch (error) {
+        console.error("Error fetching current user:", error);
         setIsAuthenticated(false);
         setUser(null);
       }
+
       setIsLoading(false);
     };
 

@@ -20,6 +20,19 @@ const authService = {
     await apiClient.post("/api/logout");
   },
 
+  async checkAuthStatus() {
+    try {
+      const response = await apiClient.get("/api/current-user");
+      if (response.status === 200) {
+        return response.data;
+      }
+      throw new Error("Not authenticated");
+    } catch (error) {
+      console.error("Error checking auth status:", error);
+      throw error;
+    }
+  },
+
   async register(username: string, email: string, password: string) {
     const response = await apiClient.post("/auth/local/register", {
       username,
