@@ -5,8 +5,8 @@ import {
   useState,
   useEffect,
 } from "react";
-import Cookies from "js-cookie";
 import authService from "@/services/authService"; // Adjust the path accordingly
+import { AxiosError } from "@/global-interfaces";
 
 interface User {
   id: number;
@@ -40,13 +40,31 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   useEffect(() => {
     const initializeAuth = async () => {
+      // Check for the existence of the "authFlag" in local storage
+      const authFlag = localStorage.getItem("authFlag");
+
+      if (!authFlag) {
+        setIsAuthenticated(false);
+        setUser(null);
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const data = await authService.checkAuthStatus();
         setIsAuthenticated(true);
         setUser(data);
-      } catch (error) {
-        setIsAuthenticated(false);
-        setUser(null);
+      } catch (err) {
+        const error = err as AxiosError;
+
+        console.log("Axios Error:", error.response?.status);
+
+        if (error.response?.status === 401) {
+          setIsAuthenticated(false);
+          setUser(null);
+        } else {
+          console.error("Error during auth initialization:", error);
+        }
       }
       setIsLoading(false);
     };
@@ -62,6 +80,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (data.user) {
         setIsAuthenticated(true);
         setUser(data.user);
+
+        localStorage.setItem("authFlag", "true");
       } else {
         console.error("Login failed");
       }
@@ -75,6 +95,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       await authService.logout();
       setIsAuthenticated(false);
       setUser(null);
+
+      localStorage.removeItem("authFlag");
     } catch (error) {
       console.error("Error during logout:", error);
     }

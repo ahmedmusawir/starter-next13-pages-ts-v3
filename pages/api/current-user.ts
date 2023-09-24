@@ -7,7 +7,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const userResponse = await strapiApiClient.get("/users/me", {
       headers: {
-        Authorization: `Bearer ${req.cookies.jwt}`, // Assuming the cookie name is "jwt"
+        Authorization: `Bearer ${req.cookies.jwt}`,
       },
     });
 
@@ -19,6 +19,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   } catch (err) {
     const error = err as AxiosError;
     console.error("Error during login:", error);
-    res.status(error.response?.status || 500).json(error.response?.data);
+    return res.status(error.response?.status || 500).json(error.response?.data);
   }
 };
