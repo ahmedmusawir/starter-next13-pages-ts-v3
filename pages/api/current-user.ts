@@ -5,7 +5,7 @@ import strapiApiClient from "@/services/strapiApiClient";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const userResponse = await strapiApiClient.get("/users/me", {
+    const userResponse = await strapiApiClient.get("/users/me?populate=*", {
       headers: {
         Authorization: `Bearer ${req.cookies.jwt}`,
       },

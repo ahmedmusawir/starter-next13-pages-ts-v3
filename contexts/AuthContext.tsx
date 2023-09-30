@@ -6,18 +6,7 @@ import {
   useEffect,
 } from "react";
 import authService from "@/services/authService"; // Adjust the path accordingly
-import { AxiosError } from "@/global-interfaces";
-
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  provider: string;
-  confirmed: boolean;
-  blocked: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
+import { AxiosError, User } from "@/global-interfaces";
 
 interface AuthContextType {
   isAuthenticated: boolean;

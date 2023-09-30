@@ -9,6 +9,10 @@ const strapiApiClient = axios.create({
   headers: { Authorization: `Bearer ${strapiApiKey}` },
 });
 
+// console.log("UPLOAD API KEY", process.env.STRAPI_UPLOAD_API_KEY);
+// console.log(  "UPLOAD CLIENT SIDE API KEY",  process.env.NEXT_PUBLIC_STRAPI_API_KEY);
+// console.log("API URL", process.env.NEXT_PUBLIC_STRAPI_API_BASE_URL);
+
 // Function to set the JWT token for subsequent requests
 export const setAuthToken = (token: string | null) => {
   if (token) {
@@ -21,26 +25,11 @@ export const setAuthToken = (token: string | null) => {
 };
 
 // Function for image upload
-export const uploadImage = async (formData: FormData) => {
-  return strapiApiClient.post(
-    `${process.env.NEXT_PUBLIC_STRAPI_API_BASE_URL}/upload`,
-    formData,
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_API_KEY}`,
-        "Content-Type": "multipart/form-data",
-      },
-    }
-  );
-};
-
-// Function to updating the current User with profile image
-export const updateUserProfileImage = async (
-  userId: number,
-  imageId: number
-) => {
-  return strapiApiClient.put(`/users/${userId}`, {
-    profileImage: imageId,
+export const uploadImage = async (formData: FormData, token: string) => {
+  return strapiApiClient.post(`/upload`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 };
 

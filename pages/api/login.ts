@@ -18,6 +18,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     const jwt: string = strapiRes.data.jwt;
 
+    // Fetch the full user object with the profile image
+    const userResponse = await strapiApiClient.get("/users/me?populate=*", {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+
     res.setHeader(
       "Set-Cookie",
       cookie.serialize("jwt", jwt, {
@@ -29,7 +36,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       })
     );
 
-    res.status(200).json({ user: strapiRes.data.user });
+    // Return the full user object
+    res.status(200).json({ user: userResponse.data });
   } catch (err) {
     const error = err as AxiosError;
     console.error("Error during login:", error);
