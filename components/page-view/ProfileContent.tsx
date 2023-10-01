@@ -186,7 +186,7 @@ const ProfileContent = () => {
                   <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
                     <div className="flex flex-wrap justify-center">
                       <div className="w-full lg:w-9/12 px-4">
-                        <h4>Manage Password:</h4>
+                        <h4 className="mb-5">Manage Password:</h4>
                         <form onSubmit={handleSubmitPassword(onPasswordSubmit)}>
                           <div className="mb-4">
                             <input
