@@ -5,10 +5,17 @@ const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useAuth();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   await login(email, password);
+  // };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await login(email, password);
+    const error = await login(email, password);
+    setErrorMessage(error as any);
   };
 
   return (
@@ -86,6 +93,9 @@ const LoginForm = () => {
               >
                 Sign in
               </button>
+              {errorMessage && (
+                <p className="text-red-500 mt-2">{errorMessage}</p>
+              )}
             </div>
           </form>
 

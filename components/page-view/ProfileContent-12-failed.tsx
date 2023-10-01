@@ -1,18 +1,16 @@
-import Head from "next/head";
-import React, { useState } from "react";
-import { Page } from "../globals";
 import { useAuth } from "@/contexts/AuthContext";
-import { useForm, FieldValues } from "react-hook-form";
-import strapiApiClient from "@/services/strapiApiClient";
+import { uploadImage } from "@/services/strapiApiClient";
+import { UserCircleIcon } from "@heroicons/react/20/solid";
+import Head from "next/head";
+import { useForm } from "react-hook-form";
+import { Page } from "../globals";
 
 const ProfileContent = () => {
-  const defaultImageUrl = "#";
-  const { user } = useAuth();
+  const defaultImageUrl = <UserCircleIcon />;
+  const { user, setUser } = useAuth();
 
   const { register, handleSubmit, watch } = useForm();
   const selectedFile = watch("profileImage");
-
-  console.log("Selected File: ", selectedFile);
 
   const onImageSubmit = async (data: any) => {
     const file = data.profileImage[0];
@@ -25,15 +23,73 @@ const ProfileContent = () => {
     formData.append("files", selectedFile[0]);
 
     try {
-      const strapiRes = await strapiApiClient.post(`/upload`, formData, {
+      const strapiRes = await uploadImage(formData);
+      console.log(strapiRes.data);
+
+      // Get the ID of the uploaded image
+      const uploadedImageId = strapiRes.data[0].id;
+
+      if (!user) return;
+
+      // Update the user's profile with the new image ID
+      const response = await fetch("/api/update-user", {
+        method: "PUT",
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          userId: user.id,
+          imageId: uploadedImageId,
+        }),
       });
 
-      console.log(strapiRes.data);
+      // After successfully updating the user's profile image, fetch the updated user data
+      const updatedUserDataResponse = await fetch(`/api/current-user`);
+      const updatedUserDataWithImage = await updatedUserDataResponse.json();
+
+      // console.log("Updated User Image Data:", updatedUserDataWithImage);
+
+      setUser(updatedUserDataWithImage);
     } catch (error) {
       console.error("Error uploading image:", error);
+    }
+  };
+
+  const {
+    register: registerPassword,
+    handleSubmit: handleSubmitPassword,
+    watch: watchPassword,
+    formState: { errors: errorsPassword },
+  } = useForm();
+
+  const password = watchPassword("password");
+
+  const onPasswordSubmit = async (data: any) => {
+    if (!user) return;
+
+    try {
+      const response = await fetch("/api/update-password", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          newPassword: data.password,
+        }),
+      });
+
+      const responseData = await response.json();
+
+      if (response.ok) {
+        console.log(responseData.message);
+        // Maybe show a success message to the user
+      } else {
+        console.error("Error updating password:", responseData);
+        // Handle the error, maybe show an error message to the user
+      }
+    } catch (error) {
+      console.error("Error updating password:", error);
     }
   };
 
@@ -52,16 +108,15 @@ const ProfileContent = () => {
                   <div className="flex flex-wrap justify-center">
                     <div className="w-full lg:w-3/12 px-4 lg:order-2 flex justify-center">
                       <div className="w-32 h-32 overflow-hidden rounded-full   -mt-16 bg-gray-200">
-                        <img
-                          alt="..."
-                          // src="https://res.cloudinary.com/dyb0qa58h/image/upload/v1693536449/Moose_ip4al4.png"
-                          src={
-                            user?.profileImage?.url
-                              ? `http://localhost:1337${user.profileImage.url}`
-                              : defaultImageUrl
-                          }
-                          className="w-full h-full object-cover shadow-xl"
-                        />
+                        {user?.profileImage?.url ? (
+                          <img
+                            alt="User Profile"
+                            src={`http://localhost:1337${user.profileImage.url}`}
+                            className="w-full h-full object-cover shadow-xl"
+                          />
+                        ) : (
+                          <UserCircleIcon />
+                        )}
                       </div>
                     </div>
 
@@ -147,10 +202,76 @@ const ProfileContent = () => {
                   <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
                     <div className="flex flex-wrap justify-center">
                       <div className="w-full lg:w-9/12 px-4">
-                        <h4>Manage Password:</h4>
-                        <p className="mb-4 text-lg leading-relaxed text-blueGray-700">
-                          This is where the password form should go ...
-                        </p>
+                        <h4 className="mb-5">Manage Password:</h4>
+                        <form onSubmit={handleSubmitPassword(onPasswordSubmit)}>
+                          <div className="mb-4">
+                            <input
+                              type="password"
+                              placeholder="Current Password"
+                              {...registerPassword("currentPassword", {
+                                required: "Current password is required",
+                              })}
+                              className="input input-bordered w-full"
+                            />
+                            {errorsPassword.currentPassword && (
+                              <p className="text-red-500">
+                                {
+                                  errorsPassword.currentPassword
+                                    .message as string
+                                }
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="mb-4">
+                            <input
+                              type="password"
+                              placeholder="New Password"
+                              {...registerPassword("password", {
+                                required: "Password is required",
+                                minLength: {
+                                  value: 8,
+                                  message:
+                                    "Password should be at least 8 characters",
+                                },
+                              })}
+                              className="input input-bordered w-full"
+                            />
+                            {errorsPassword.password && (
+                              <p className="text-red-500">
+                                {errorsPassword.password.message as string}
+                              </p>
+                            )}
+                          </div>
+                          <div className="mb-4">
+                            <input
+                              type="password"
+                              placeholder="Confirm Password"
+                              {...registerPassword("confirmPassword", {
+                                required: "Please confirm password",
+                                validate: (value) =>
+                                  value === password ||
+                                  "Passwords do not match",
+                              })}
+                              className="input input-bordered w-full"
+                            />
+                            {errorsPassword.confirmPassword && (
+                              <p className="text-red-500">
+                                {
+                                  errorsPassword.confirmPassword
+                                    .message as string
+                                }
+                              </p>
+                            )}
+                          </div>
+                          <button
+                            type="submit"
+                            className="btn btn-primary"
+                            // onClick={() => console.log("Button clicked")}
+                          >
+                            Update Password
+                          </button>
+                        </form>
                       </div>
                     </div>
                   </div>

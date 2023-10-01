@@ -40,7 +40,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(200).json({ user: userResponse.data });
   } catch (err) {
     const error = err as AxiosError;
-    console.error("Error during login:", error);
-    res.status(error.response?.status || 500).json(error.response?.data);
+
+    // Check if the error response has the expected format
+    if (error.response?.data?.error?.message) {
+      const errorMessage = error.response.data.error.message;
+      const statusCode = error.response.data.error.status;
+
+      return res.status(statusCode).json({
+        error: errorMessage,
+      });
+    }
+
+    console.error("Error updating password:", error);
+    return res.status(error.response?.status || 500).json({
+      error: "An unexpected error occurred.",
+    });
   }
 };

@@ -14,6 +14,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -74,8 +75,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       } else {
         console.error("Login failed");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error during login:", error);
+      const serverErrorMessage = error.response?.data?.error;
+      return serverErrorMessage || "An unexpected error occurred.";
     }
   };
 
@@ -97,7 +100,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, user, isLoading, login, logout }}
+      value={{ isAuthenticated, user, setUser, isLoading, login, logout }}
     >
       {children}
     </AuthContext.Provider>

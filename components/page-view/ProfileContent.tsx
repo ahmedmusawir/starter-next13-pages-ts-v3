@@ -1,19 +1,14 @@
-import Head from "next/head";
-import React, { useEffect, useState } from "react";
-import { Page } from "../globals";
 import { useAuth } from "@/contexts/AuthContext";
-import { useForm, FieldValues } from "react-hook-form";
-import strapiApiClient, {
-  updateUserProfileImage,
-  uploadImage,
-} from "@/services/strapiApiClient";
+import { uploadImage } from "@/services/strapiApiClient";
+import { UserCircleIcon } from "@heroicons/react/20/solid";
+import Head from "next/head";
+import { useForm } from "react-hook-form";
+import { Page } from "../globals";
+import { useState } from "react";
 
 const ProfileContent = () => {
-  const defaultImageUrl = "#";
-  const { user } = useAuth();
-
-  // Local state for user data
-  const [userData, setUserData] = useState(user);
+  const { user, setUser } = useAuth();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const { register, handleSubmit, watch } = useForm();
   const selectedFile = watch("profileImage");
@@ -53,9 +48,9 @@ const ProfileContent = () => {
       const updatedUserDataResponse = await fetch(`/api/current-user`);
       const updatedUserDataWithImage = await updatedUserDataResponse.json();
 
-      console.log("Updated User Image Data:", updatedUserDataWithImage);
+      // console.log("Updated User Image Data:", updatedUserDataWithImage);
 
-      setUserData(updatedUserDataWithImage);
+      setUser(updatedUserDataWithImage);
     } catch (error) {
       console.error("Error uploading image:", error);
     }
@@ -70,10 +65,37 @@ const ProfileContent = () => {
 
   const password = watchPassword("password");
 
-  const onPasswordSubmit = (data: any) => {
-    console.log("pass form data", data);
-    console.log("submitted");
-    // Handle password update logic here
+  const onPasswordSubmit = async (data: any) => {
+    console.log("Form Data for Pass Update:", data);
+    try {
+      const response = await fetch("/api/update-password", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          currentPassword: data.currentPassword,
+          newPassword: data.password,
+          confirmPassword: data.confirmPassword,
+        }),
+      });
+
+      const responseData = await response.json();
+
+      if (response.ok) {
+        console.log(responseData.message);
+        // Maybe show a success message to the user
+        setErrorMessage(null); // Clear any previous error messages
+      } else {
+        console.error("Error updating password:", responseData.error);
+        // Display the error message to the user
+        setErrorMessage(responseData.error);
+      }
+    } catch (error) {
+      console.error("Error updating password:", error);
+      // Handle other unexpected errors
+      setErrorMessage("An unexpected error occurred.");
+    }
   };
 
   return (
@@ -91,16 +113,15 @@ const ProfileContent = () => {
                   <div className="flex flex-wrap justify-center">
                     <div className="w-full lg:w-3/12 px-4 lg:order-2 flex justify-center">
                       <div className="w-32 h-32 overflow-hidden rounded-full   -mt-16 bg-gray-200">
-                        <img
-                          alt="..."
-                          // src="https://res.cloudinary.com/dyb0qa58h/image/upload/v1693536449/Moose_ip4al4.png"
-                          src={
-                            user?.profileImage?.url
-                              ? `http://localhost:1337${userData?.profileImage.url}`
-                              : defaultImageUrl
-                          }
-                          className="w-full h-full object-cover shadow-xl"
-                        />
+                        {user?.profileImage?.url ? (
+                          <img
+                            alt="User Profile"
+                            src={`http://localhost:1337${user.profileImage.url}`}
+                            className="w-full h-full object-cover shadow-xl"
+                          />
+                        ) : (
+                          <UserCircleIcon />
+                        )}
                       </div>
                     </div>
 
@@ -191,6 +212,25 @@ const ProfileContent = () => {
                           <div className="mb-4">
                             <input
                               type="password"
+                              placeholder="Current Password"
+                              {...registerPassword("currentPassword", {
+                                required: "Current password is required",
+                              })}
+                              className="input input-bordered w-full"
+                            />
+                            {errorsPassword.currentPassword && (
+                              <p className="text-red-500">
+                                {
+                                  errorsPassword.currentPassword
+                                    .message as string
+                                }
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="mb-4">
+                            <input
+                              type="password"
                               placeholder="New Password"
                               {...registerPassword("password", {
                                 required: "Password is required",
@@ -236,6 +276,9 @@ const ProfileContent = () => {
                           >
                             Update Password
                           </button>
+                          {errorMessage && (
+                            <p className="text-red-500 mt-2">{errorMessage}</p>
+                          )}
                         </form>
                       </div>
                     </div>
