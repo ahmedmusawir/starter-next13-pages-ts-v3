@@ -5,13 +5,13 @@ Next.js 13 Starter kit with pages dir w/ Typescript + Strapi Auth + Shopping Car
 - Strapi Auth added with Context API
 - Profile page created with:
 
-* Profile Image upload feature
-* Password update feature
-* Profile Image visible on Navbar
-* Route Guard
-* User Registarion (Strapi v4)
-* Error message handling
-* Display success/fail messages via React Toast
+  - Profile Image upload feature
+  - Password update feature
+  - Profile Image visible on Navbar
+  - Route Guard
+  - User Registarion (Strapi v4)
+  - Error message handling
+  - Display success/fail messages via React Toast
 
 ## Getting Started
 
