@@ -27,8 +27,7 @@ interface NavLinkProps {
 const Navbar = () => {
   const router = useRouter();
   const { setIsCartOpen, cartItems } = useCart();
-  const [open, setOpen] = useState(false);
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout, open, setOpen } = useAuth();
 
   const NavLink = ({ href, children }: NavLinkProps) => {
     const isActive = router.pathname === href;
@@ -49,7 +48,7 @@ const Navbar = () => {
 
   return (
     <>
-      <LoginModal open={open} setOpen={setOpen} />
+      <LoginModal />
       <Disclosure as="nav" className="bg-gray-800">
         {({ open }) => (
           <>

@@ -6,6 +6,8 @@ import { ThemeProvider } from "@/theme/ThemeProvider";
 import type { AppProps } from "next/app";
 import { Provider } from "react-redux";
 import "@/styles/globals.scss";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -15,6 +17,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <ProductProvider>
             <CartProvider>
               <Component {...pageProps} />
+              <ToastContainer />
             </CartProvider>
           </ProductProvider>
         </ThemeProvider>

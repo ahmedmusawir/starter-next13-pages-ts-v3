@@ -1,4 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
+import Link from "next/link";
 import { useState } from "react";
 
 const LoginForm = () => {
@@ -6,11 +7,6 @@ const LoginForm = () => {
   const [password, setPassword] = useState("");
   const { login } = useAuth();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   await login(email, password);
-  // };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -101,12 +97,12 @@ const LoginForm = () => {
 
           <p className="mt-10 text-center text-sm text-gray-500">
             Not a member?{" "}
-            <a
-              href="#"
+            <Link
+              href="/signup"
               className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
             >
-              Start a 14 day free trial
-            </a>
+              Signup for a 14 day free trial
+            </Link>
           </p>
         </div>
       </div>

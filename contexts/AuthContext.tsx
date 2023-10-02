@@ -7,14 +7,17 @@ import {
 } from "react";
 import authService from "@/services/authService"; // Adjust the path accordingly
 import { AxiosError, User } from "@/global-interfaces";
+import { useRouter } from "next/router";
 
 interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
   isLoading: boolean;
+  open: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -27,6 +30,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -72,6 +77,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUser(data.user);
 
         localStorage.setItem("authFlag", "true");
+
+        router.push("/profile");
       } else {
         console.error("Login failed");
       }
@@ -100,7 +107,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, user, setUser, isLoading, login, logout }}
+      value={{
+        isAuthenticated,
+        user,
+        setUser,
+        isLoading,
+        login,
+        logout,
+        setOpen,
+        open,
+      }}
     >
       {children}
     </AuthContext.Provider>

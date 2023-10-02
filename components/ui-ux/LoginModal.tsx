@@ -4,13 +4,13 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import LoginForm from "../forms/LoginForm";
 import { useAuth } from "@/contexts/AuthContext";
 
-interface Props {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
+// interface Props {
+//   open: boolean;
+//   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+// }
 
-const LoginModal = ({ open, setOpen }: Props) => {
-  const { isAuthenticated } = useAuth();
+const LoginModal = () => {
+  const { isAuthenticated, open, setOpen } = useAuth();
 
   useEffect(() => {
     if (isAuthenticated) {
