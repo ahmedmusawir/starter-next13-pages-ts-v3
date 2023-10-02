@@ -1,7 +1,9 @@
 import SignupContent from "@/components/page-view/SignupContent";
-import styles from "./demo.module.scss";
-import { Demo } from "@/components/page-view";
+import styles from "./signup.module.scss";
+import withoutAuth from "@/hoc/withoutAuth";
 
-export default function SignupPage() {
+const SignupPage = () => {
   return <SignupContent />;
-}
+};
+
+export default withoutAuth(SignupPage);
