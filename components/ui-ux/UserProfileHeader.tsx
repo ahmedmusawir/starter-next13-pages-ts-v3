@@ -1,7 +1,9 @@
-import { User } from "@/global-interfaces";
+import { useAuth } from "@/contexts/AuthContext";
 import { UserCircleIcon } from "@heroicons/react/20/solid";
 
-const UserProfileHeader = ({ user }: { user: User | null }) => {
+const UserProfileHeader = () => {
+  const { user } = useAuth();
+
   return (
     <>
       <div className="flex flex-wrap justify-center">

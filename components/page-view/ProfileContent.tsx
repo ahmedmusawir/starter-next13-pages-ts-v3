@@ -6,8 +6,6 @@ import UploadProfileImage from "../ui-ux/UploadProfileImage";
 import UserProfileHeader from "../ui-ux/UserProfileHeader";
 
 const ProfileContent = () => {
-  const { user, setUser } = useAuth();
-
   return (
     <>
       <Head>
@@ -20,9 +18,9 @@ const ProfileContent = () => {
             <div className="container mx-auto px-4">
               <div className="relative flex flex-col min-w-0 break-words bg-white w-full shadow-xl rounded-lg border-2 border-gray-100">
                 <div className="px-6">
-                  <UserProfileHeader user={user} />
-                  <UploadProfileImage user={user} setUser={setUser} />
-                  <UpdatePassword user={user} />
+                  <UserProfileHeader />
+                  <UploadProfileImage />
+                  <UpdatePassword />
                 </div>
               </div>
             </div>

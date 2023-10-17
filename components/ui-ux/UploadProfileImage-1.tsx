@@ -1,9 +1,12 @@
-import { useAuth } from "@/contexts/AuthContext";
 import { User } from "@/global-interfaces";
 import useProfileImageUpload from "@/hooks/useProfileImageUpload";
 
-const UploadProfileImage = () => {
-  const { user, setUser } = useAuth();
+interface Props {
+  user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+}
+
+const UploadProfileImage = ({ user, setUser }: Props) => {
   const { register, handleSubmit } = useProfileImageUpload({ user, setUser });
 
   return (

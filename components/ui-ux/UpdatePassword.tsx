@@ -2,7 +2,7 @@ import { User } from "@/global-interfaces";
 import usePasswordUpdate from "@/hooks/usePasswordUpdate";
 import { useState } from "react";
 
-const UpdatePassword = ({ user }: { user: User | null }) => {
+const UpdatePassword = () => {
   const { register, handleSubmit, errors, password, errorMessage } =
     usePasswordUpdate();
 
@@ -64,11 +64,7 @@ const UpdatePassword = ({ user }: { user: User | null }) => {
                 </p>
               )}
             </div>
-            <button
-              type="submit"
-              className="btn btn-primary"
-              // onClick={() => console.log("Button clicked")}
-            >
+            <button type="submit" className="btn btn-primary">
               Update Password
             </button>
             {errorMessage && (
