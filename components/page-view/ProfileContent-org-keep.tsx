@@ -4,10 +4,12 @@ import { UserCircleIcon } from "@heroicons/react/20/solid";
 import Head from "next/head";
 import { useForm } from "react-hook-form";
 import { Page } from "../globals";
+import { useState } from "react";
+import { toast } from "react-toastify";
 
 const ProfileContent = () => {
-  const defaultImageUrl = <UserCircleIcon />;
   const { user, setUser } = useAuth();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const { register, handleSubmit, watch } = useForm();
   const selectedFile = watch("profileImage");
@@ -65,8 +67,7 @@ const ProfileContent = () => {
   const password = watchPassword("password");
 
   const onPasswordSubmit = async (data: any) => {
-    if (!user) return;
-
+    console.log("Form Data for Pass Update:", data);
     try {
       const response = await fetch("/api/update-password", {
         method: "PUT",
@@ -74,8 +75,9 @@ const ProfileContent = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: user.id,
+          currentPassword: data.currentPassword,
           newPassword: data.password,
+          confirmPassword: data.confirmPassword,
         }),
       });
 
@@ -84,12 +86,19 @@ const ProfileContent = () => {
       if (response.ok) {
         console.log(responseData.message);
         // Maybe show a success message to the user
+        setErrorMessage(null); // Clear any previous error messages
+        toast.success("Password update successful! Please login.");
       } else {
-        console.error("Error updating password:", responseData);
-        // Handle the error, maybe show an error message to the user
+        console.error("Error updating password:", responseData.error);
+        // Display the error message to the user
+        setErrorMessage(responseData.error);
+        toast.error("Error during signup. Please try again.");
       }
     } catch (error) {
       console.error("Error updating password:", error);
+      // Handle other unexpected errors
+      setErrorMessage("An unexpected error occurred.");
+      toast.error("Error during signup. Please try again.");
     }
   };
 
@@ -271,6 +280,9 @@ const ProfileContent = () => {
                           >
                             Update Password
                           </button>
+                          {errorMessage && (
+                            <p className="text-red-500 mt-2">{errorMessage}</p>
+                          )}
                         </form>
                       </div>
                     </div>
