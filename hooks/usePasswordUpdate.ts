@@ -14,7 +14,7 @@ const usePasswordUpdate = () => {
   const password = watch("password");
 
   const onPasswordSubmit = async (data: any) => {
-    console.log("Form Data for Pass Update:", data);
+    // console.log("Form Data for Pass Update:", data);
     try {
       const response = await fetch("/api/update-password", {
         method: "PUT",

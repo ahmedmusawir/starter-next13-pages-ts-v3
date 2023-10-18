@@ -12,14 +12,14 @@ const useProfileImageUpload = ({ user, setUser }: Props) => {
   const selectedFile = watch("profileImage");
 
   const onImageSubmit = async (data: any) => {
-    const file = data.profileImage[0];
+    const file = selectedFile[0];
     if (!file) {
       console.error("No file selected");
       return;
     }
 
     const formData = new FormData();
-    formData.append("files", selectedFile[0]);
+    formData.append("files", file);
 
     try {
       const strapiRes = await uploadImage(formData);
@@ -45,8 +45,6 @@ const useProfileImageUpload = ({ user, setUser }: Props) => {
       // After successfully updating the user's profile image, fetch the updated user data
       const updatedUserDataResponse = await fetch(`/api/current-user`);
       const updatedUserDataWithImage = await updatedUserDataResponse.json();
-
-      // console.log("Updated User Image Data:", updatedUserDataWithImage);
 
       setUser(updatedUserDataWithImage);
     } catch (error) {

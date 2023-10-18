@@ -1,6 +1,4 @@
-import { User } from "@/global-interfaces";
 import usePasswordUpdate from "@/hooks/usePasswordUpdate";
-import { useState } from "react";
 
 const UpdatePassword = () => {
   const { register, handleSubmit, errors, password, errorMessage } =

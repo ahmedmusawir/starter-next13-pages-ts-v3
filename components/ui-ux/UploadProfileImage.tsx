@@ -1,5 +1,4 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { User } from "@/global-interfaces";
 import useProfileImageUpload from "@/hooks/useProfileImageUpload";
 
 const UploadProfileImage = () => {

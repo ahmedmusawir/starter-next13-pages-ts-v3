@@ -15,15 +15,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   try {
-    // Fetch the user's data using Strapi's endpoint
-    const userResponse = await strapiApiClient.get("/users/me", {
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
-    });
-
-    const user = userResponse.data;
-
     // Update the password using Strapi's endpoint
     const response = await strapiApiClient.post(
       "/auth/change-password",
