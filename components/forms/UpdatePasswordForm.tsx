@@ -1,6 +1,6 @@
 import usePasswordUpdate from "@/hooks/usePasswordUpdate";
 
-const UpdatePassword = () => {
+const UpdatePasswordForm = () => {
   const { register, handleSubmit, errors, password, errorMessage } =
     usePasswordUpdate();
 
@@ -20,7 +20,7 @@ const UpdatePassword = () => {
                 className="input input-bordered w-full"
               />
               {errors.currentPassword && (
-                <p className="text-red-500">
+                <p className="text-red-500 mt-3">
                   {errors.currentPassword.message as string}
                 </p>
               )}
@@ -40,7 +40,7 @@ const UpdatePassword = () => {
                 className="input input-bordered w-full"
               />
               {errors.password && (
-                <p className="text-red-500">
+                <p className="text-red-500 mt-3">
                   {errors.password.message as string}
                 </p>
               )}
@@ -57,7 +57,7 @@ const UpdatePassword = () => {
                 className="input input-bordered w-full"
               />
               {errors.confirmPassword && (
-                <p className="text-red-500">
+                <p className="text-red-500 mt-3">
                   {errors.confirmPassword.message as string}
                 </p>
               )}
@@ -75,4 +75,4 @@ const UpdatePassword = () => {
   );
 };
 
-export default UpdatePassword;
+export default UpdatePasswordForm;

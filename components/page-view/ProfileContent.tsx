@@ -1,9 +1,9 @@
 import { useAuth } from "@/contexts/AuthContext";
 import Head from "next/head";
 import { Page } from "../globals";
-import UpdatePassword from "../ui-ux/UpdatePassword";
-import UploadProfileImage from "../ui-ux/UploadProfileImage";
 import UserProfileHeader from "../ui-ux/UserProfileHeader";
+import UploadProfileImageForm from "../forms/UploadProfileImageForm";
+import UpdatePasswordForm from "../forms/UpdatePasswordForm";
 
 const ProfileContent = () => {
   return (
@@ -19,8 +19,8 @@ const ProfileContent = () => {
               <div className="relative flex flex-col min-w-0 break-words bg-white w-full shadow-xl rounded-lg border-2 border-gray-100">
                 <div className="px-6">
                   <UserProfileHeader />
-                  <UploadProfileImage />
-                  <UpdatePassword />
+                  <UploadProfileImageForm />
+                  <UpdatePasswordForm />
                 </div>
               </div>
             </div>

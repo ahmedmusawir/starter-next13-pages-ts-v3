@@ -8,6 +8,7 @@ import {
 import authService from "@/services/authService"; // Adjust the path accordingly
 import { AxiosError, User } from "@/global-interfaces";
 import { useRouter } from "next/router";
+import Spinner from "@/components/ui-ux/Spinner";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -102,7 +103,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>; // Or a loading spinner
+    return <Spinner />;
   }
 
   return (

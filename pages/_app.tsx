@@ -12,16 +12,14 @@ import { ToastContainer } from "react-toastify";
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <AuthProvider>
-      <Provider store={store}>
-        <ThemeProvider>
-          <ProductProvider>
-            <CartProvider>
-              <Component {...pageProps} />
-              <ToastContainer />
-            </CartProvider>
-          </ProductProvider>
-        </ThemeProvider>
-      </Provider>
+      <ThemeProvider>
+        <ProductProvider>
+          <CartProvider>
+            <Component {...pageProps} />
+            <ToastContainer />
+          </CartProvider>
+        </ProductProvider>
+      </ThemeProvider>
     </AuthProvider>
   );
 }

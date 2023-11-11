@@ -7,19 +7,23 @@ interface Props {
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
 }
 
+interface ImageUploadFormData {
+  profileImage: FileList;
+}
+
 const useProfileImageUpload = ({ user, setUser }: Props) => {
-  const { register, handleSubmit, watch } = useForm();
+  const { register, handleSubmit, watch } = useForm<ImageUploadFormData>();
   const selectedFile = watch("profileImage");
 
-  const onImageSubmit = async (data: any) => {
-    const file = selectedFile[0];
+  const onImageSubmit = async (data: ImageUploadFormData) => {
+    const file = data.profileImage[0];
     if (!file) {
       console.error("No file selected");
       return;
     }
 
     const formData = new FormData();
-    formData.append("files", file);
+    formData.append("files", selectedFile[0]);
 
     try {
       const strapiRes = await uploadImage(formData);
@@ -31,7 +35,7 @@ const useProfileImageUpload = ({ user, setUser }: Props) => {
       if (!user) return;
 
       // Update the user's profile with the new image ID
-      const response = await fetch("/api/update-user", {
+      const response = await fetch("/api/update-user-image", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

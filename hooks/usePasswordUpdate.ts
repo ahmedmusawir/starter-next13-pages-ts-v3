@@ -2,6 +2,12 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
+interface PasswordResetForm {
+  password: string;
+  currentPassword: string;
+  confirmPassword: string;
+}
+
 const usePasswordUpdate = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -10,11 +16,10 @@ const usePasswordUpdate = () => {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm();
+  } = useForm<PasswordResetForm>();
   const password = watch("password");
 
-  const onPasswordSubmit = async (data: any) => {
-    // console.log("Form Data for Pass Update:", data);
+  const onPasswordSubmit = async (data: PasswordResetForm) => {
     try {
       const response = await fetch("/api/update-password", {
         method: "PUT",

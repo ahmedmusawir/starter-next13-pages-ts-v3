@@ -1,7 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import useProfileImageUpload from "@/hooks/useProfileImageUpload";
 
-const UploadProfileImage = () => {
+const UploadProfileImageForm = () => {
   const { user, setUser } = useAuth();
   const { register, handleSubmit } = useProfileImageUpload({ user, setUser });
 
@@ -27,4 +27,4 @@ const UploadProfileImage = () => {
   );
 };
 
-export default UploadProfileImage;
+export default UploadProfileImageForm;

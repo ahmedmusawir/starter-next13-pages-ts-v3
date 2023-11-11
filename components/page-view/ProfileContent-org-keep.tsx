@@ -7,14 +7,28 @@ import { Page } from "../globals";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
+interface ImageUploadFormData {
+  profileImage: FileList;
+}
+
+interface PasswordRestForm {
+  password: string;
+  currentPassword: string;
+  confirmPassword: string;
+}
+
 const ProfileContent = () => {
   const { user, setUser } = useAuth();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const { register, handleSubmit, watch } = useForm();
+  const {
+    register,
+    handleSubmit: handleSubmitImage,
+    watch,
+  } = useForm<ImageUploadFormData>();
   const selectedFile = watch("profileImage");
 
-  const onImageSubmit = async (data: any) => {
+  const onImageSubmit = handleSubmitImage(async (data: ImageUploadFormData) => {
     const file = data.profileImage[0];
     if (!file) {
       console.error("No file selected");
@@ -55,18 +69,18 @@ const ProfileContent = () => {
     } catch (error) {
       console.error("Error uploading image:", error);
     }
-  };
+  });
 
   const {
     register: registerPassword,
     handleSubmit: handleSubmitPassword,
     watch: watchPassword,
     formState: { errors: errorsPassword },
-  } = useForm();
+  } = useForm<PasswordRestForm>();
 
   const password = watchPassword("password");
 
-  const onPasswordSubmit = async (data: any) => {
+  const onPasswordSubmit = handleSubmitPassword(async (data) => {
     console.log("Form Data for Pass Update:", data);
     try {
       const response = await fetch("/api/update-password", {
@@ -100,7 +114,7 @@ const ProfileContent = () => {
       setErrorMessage("An unexpected error occurred.");
       toast.error("Error during signup. Please try again.");
     }
-  };
+  });
 
   return (
     <>
@@ -192,7 +206,7 @@ const ProfileContent = () => {
                         <div className="flex flex-wrap justify-center">
                           <div className="w-full lg:w-9/12 px-4">
                             <h4 className="mb-5">Upload Profile Image:</h4>
-                            <form onSubmit={handleSubmit(onImageSubmit)}>
+                            <form onSubmit={onImageSubmit}>
                               <input
                                 type="file"
                                 {...register("profileImage", {
@@ -212,7 +226,7 @@ const ProfileContent = () => {
                     <div className="flex flex-wrap justify-center">
                       <div className="w-full lg:w-9/12 px-4">
                         <h4 className="mb-5">Manage Password:</h4>
-                        <form onSubmit={handleSubmitPassword(onPasswordSubmit)}>
+                        <form onSubmit={onPasswordSubmit}>
                           <div className="mb-4">
                             <input
                               type="password"
