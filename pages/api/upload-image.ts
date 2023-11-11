@@ -1,9 +1,5 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import strapiApiClient, { setAuthToken } from "@/services/strapiApiClient";
-import { AxiosError } from "@/global-interfaces";
-import { Files, File } from "formidable";
-import fs from "fs";
-const formidable = require("formidable");
+import { NextApiRequest, NextApiResponse } from "next";
+import fetch from "node-fetch";
 
 export const config = {
   api: {
@@ -11,52 +7,42 @@ export const config = {
   },
 };
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method !== "POST") {
-    return res.status(405).end();
+    return res.status(405).json({ message: "Method not allowed" });
   }
 
-  const form = new formidable.IncomingForm();
+  const strapiApiUrl = process.env.NEXT_PUBLIC_STRAPI_API_BASE_URL;
+  const strapiApiKey = process.env.STRAPI_UPLOAD_API_KEY;
 
-  form.parse(
-    req,
-    async (err: any, fields: { [key: string]: any }, files: Files) => {
-      if (err) {
-        return res.status(500).json({ error: "Error parsing form data." });
-      }
+  const contentType = req.headers["content-type"];
 
-      if (!files.files || files.files.length === 0) {
-        return res.status(400).json({ error: "No files uploaded." });
-      }
+  if (!contentType) {
+    return res.status(400).json({ message: "Missing Content-Type header" });
+  }
 
-      const uploadedFile = files.files[0];
+  // Forward the request to Strapi
+  const strapiResponse = await fetch(`${strapiApiUrl}/upload`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${strapiApiKey}`,
+      // Forward the content-type header from the original request
+      "Content-Type": contentType,
+    },
+    // Stream the request body directly to Strapi
+    body: req,
+  });
 
-      // Set the JWT token for the request
-      setAuthToken(req?.cookies?.jwt || null);
+  if (!strapiResponse.ok) {
+    // Forward the error from Strapi
+    const error = await strapiResponse.json();
+    return res.status(strapiResponse.status).json(error);
+  }
 
-      try {
-        const fileStream = fs.createReadStream(uploadedFile.filepath);
-
-        const strapiRes = await strapiApiClient.post(`/upload`, fileStream, {
-          headers: {
-            ...req.headers,
-            "Content-Type": uploadedFile.mimetype,
-          },
-        });
-
-        // Clean up: Delete the temp file
-        fs.unlink(uploadedFile.filepath, (err) => {
-          if (err) console.error("Error deleting temp file:", err);
-        });
-
-        return res.status(200).json(strapiRes.data);
-      } catch (err) {
-        const error = err as AxiosError;
-        console.error("Error uploading image to Strapi:", error);
-        return res
-          .status(error.response?.status || 500)
-          .json(error.response?.data);
-      }
-    }
-  );
-};
+  // Forward the successful response from Strapi
+  const data = await strapiResponse.json();
+  return res.status(200).json(data);
+}

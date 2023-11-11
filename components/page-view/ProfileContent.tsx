@@ -13,6 +13,7 @@ const ProfileContent = () => {
   const { register, handleSubmit, watch } = useForm();
   const selectedFile = watch("profileImage");
 
+  // console.log("user in ProfileContent", user);
   const onImageSubmit = async (data: any) => {
     const file = data.profileImage[0];
     if (!file) {
@@ -39,36 +40,29 @@ const ProfileContent = () => {
 
       // Get the ID of the uploaded image
       const uploadedImageId = strapiRes[0].id;
+      // console.log("Uploaded Image ID:", uploadedImageId);
 
-      // ... rest of your logic
+      if (!user) return;
 
-      // ------------------------------------------------
-      // WORRY ABOUT THE FOLLOWING LATER
-      // ------------------------------------------------
-      // Get the ID of the uploaded image
-      // const uploadedImageId = strapiRes.data[0].id;
-
-      // if (!user) return;
-
-      // // Update the user's profile with the new image ID
-      // const response = await fetch("/api/update-user", {
-      //   method: "PUT",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     userId: user.id,
-      //     imageId: uploadedImageId,
-      //   }),
-      // });
+      // Update the user's profile with the new image ID
+      const responseUser = await fetch("/api/update-user", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user?.id,
+          imageId: uploadedImageId,
+        }),
+      });
 
       // After successfully updating the user's profile image, fetch the updated user data
-      // const updatedUserDataResponse = await fetch(`/api/current-user`);
-      // const updatedUserDataWithImage = await updatedUserDataResponse.json();
+      const updatedUserDataResponse = await fetch(`/api/current-user`);
+      const updatedUserDataWithImage = await updatedUserDataResponse.json();
 
-      // console.log("Updated User Image Data:", updatedUserDataWithImage);
+      console.log("Updated User Image Data:", updatedUserDataWithImage);
 
-      // setUser(updatedUserDataWithImage);
+      setUser(updatedUserDataWithImage);
     } catch (error) {
       console.error("Error uploading image:", error);
     }

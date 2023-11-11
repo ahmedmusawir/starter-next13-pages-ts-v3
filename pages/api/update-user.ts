@@ -11,7 +11,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   try {
     const userResponse = await strapiApiClient.put(
-      `/users/${userId}?populate=*`,
+      `/users/${userId}`,
       {
         profileImage: imageId,
       },
