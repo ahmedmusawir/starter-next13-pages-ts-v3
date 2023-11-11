@@ -24,51 +24,33 @@ const ProfileContent = () => {
     formData.append("files", selectedFile[0]);
 
     try {
-      // Local fetch call to your Next.js API endpoint
-      const response = await fetch("/api/upload-image", {
-        method: "POST",
-        body: formData,
+      const strapiRes = await uploadImage(formData);
+      console.log(strapiRes.data);
+
+      // Get the ID of the uploaded image
+      const uploadedImageId = strapiRes.data[0].id;
+
+      if (!user) return;
+
+      // Update the user's profile with the new image ID
+      const response = await fetch("/api/update-user", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          imageId: uploadedImageId,
+        }),
       });
 
-      if (!response.ok) {
-        throw new Error("Error uploading image");
-      }
-
-      const strapiRes = await response.json();
-      console.log(strapiRes);
-
-      // Get the ID of the uploaded image
-      const uploadedImageId = strapiRes[0].id;
-
-      // ... rest of your logic
-
-      // ------------------------------------------------
-      // WORRY ABOUT THE FOLLOWING LATER
-      // ------------------------------------------------
-      // Get the ID of the uploaded image
-      // const uploadedImageId = strapiRes.data[0].id;
-
-      // if (!user) return;
-
-      // // Update the user's profile with the new image ID
-      // const response = await fetch("/api/update-user", {
-      //   method: "PUT",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     userId: user.id,
-      //     imageId: uploadedImageId,
-      //   }),
-      // });
-
       // After successfully updating the user's profile image, fetch the updated user data
-      // const updatedUserDataResponse = await fetch(`/api/current-user`);
-      // const updatedUserDataWithImage = await updatedUserDataResponse.json();
+      const updatedUserDataResponse = await fetch(`/api/current-user`);
+      const updatedUserDataWithImage = await updatedUserDataResponse.json();
 
       // console.log("Updated User Image Data:", updatedUserDataWithImage);
 
-      // setUser(updatedUserDataWithImage);
+      setUser(updatedUserDataWithImage);
     } catch (error) {
       console.error("Error uploading image:", error);
     }
