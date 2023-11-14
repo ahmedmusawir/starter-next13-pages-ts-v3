@@ -1,5 +1,4 @@
 import { useForm } from "react-hook-form";
-import { uploadImage } from "@/services/strapiApiClient";
 import { User } from "@/global-interfaces";
 
 interface Props {
@@ -26,16 +25,27 @@ const useProfileImageUpload = ({ user, setUser }: Props) => {
     formData.append("files", selectedFile[0]);
 
     try {
-      const strapiRes = await uploadImage(formData);
-      console.log(strapiRes.data);
+      // Local fetch call to your Next.js API endpoint
+      const responseImg = await fetch("/api/upload-image", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!responseImg.ok) {
+        throw new Error("Error uploading image");
+      }
+
+      const strapiRes = await responseImg.json();
+      console.log(strapiRes);
 
       // Get the ID of the uploaded image
-      const uploadedImageId = strapiRes.data[0].id;
+      const uploadedImageId = strapiRes[0].id;
+      // console.log("Uploaded Image ID:", uploadedImageId);
 
       if (!user) return;
 
       // Update the user's profile with the new image ID
-      const response = await fetch("/api/update-user-image", {
+      const response = await fetch("/api/update-user", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

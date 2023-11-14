@@ -8,7 +8,7 @@ const withAuth = (WrappedComponent: React.ComponentType<any>) => {
 
     // If user is not authenticated, redirect to home
     if (isAuthenticated) {
-      Router.push("/profile");
+      Router.push("/");
       return null;
     }
 
